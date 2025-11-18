@@ -8,7 +8,7 @@ namespace HomeApplianceRepairManagementSystem
     class Program
     {
         static void Main()
-        { 
+        {
 
             Console.WriteLine("....Welcom To HOME APPLIANCE REPAIR MANAGEMENT SYSTEM...");
 
@@ -158,7 +158,7 @@ namespace HomeApplianceRepairManagementSystem
             Console.Write("\nEnter Customer ID to delete: ");
             if (int.TryParse(Console.ReadLine(), out int id))
             {
-                if ( 
+                if (
                     _CustomerService.DeleteCustomer(id))
                     Console.WriteLine("\n✓ Customer deleted successfully!");
                 else
@@ -324,6 +324,6 @@ namespace HomeApplianceRepairManagementSystem
             }
         }
 
-    
+
     }
- }
+}

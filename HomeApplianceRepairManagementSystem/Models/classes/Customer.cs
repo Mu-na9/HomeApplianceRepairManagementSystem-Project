@@ -14,7 +14,7 @@ namespace HomeApplianceRepairManagementSystem.Models.classes
             public string Phone { get; set; }
             public string Address { get; set; }
           
-        public ICollection<RepairOrder> RepairOrders { get; set; }
+        public ICollection<RepairOrder> RepairOrders { get; set; } = new List<RepairOrder>();
       
 
 

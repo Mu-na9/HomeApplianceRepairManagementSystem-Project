@@ -11,7 +11,7 @@ namespace HomeApplianceRepairManagementSystem.Service
 {
     public class CustomerService 
     {
-        public AppDbcntext dbcntext { get; set; }
+        public AppDbcntext _context { get; set; }
 
         public CustomerService(AppDbcntext context)
         {
@@ -35,7 +35,7 @@ namespace HomeApplianceRepairManagementSystem.Service
             var customer = _context.Customers.Find(id);
             if (customer != null)
             {
-                customer.Name = name;
+                customer.CName = name;
                 customer.Phone = phone;
                 customer.Address = address;
                 _context.SaveChanges();
@@ -44,7 +44,7 @@ namespace HomeApplianceRepairManagementSystem.Service
 
         public bool DeleteCustomer(int id)
         {
-            var customer = _context.Customers.Include(c => c.RepairOrders).FirstOrDefault(c => c.CustomerId == id);
+            var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == id);
             if (customer == null) return false;
 
             if (customer.RepairOrders.Any())
