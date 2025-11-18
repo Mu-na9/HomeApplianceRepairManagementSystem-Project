@@ -1,6 +1,8 @@
 ﻿using HomeApplianceRepairManagementSystem.Context;
 using HomeApplianceRepairManagementSystem.Models.Enum;
 using HomeApplianceRepairManagementSystem.Service;
+using HomeApplianceRepairManagementSystem.services;
+using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace HomeApplianceRepairManagementSystem
@@ -10,320 +12,211 @@ namespace HomeApplianceRepairManagementSystem
         static void Main()
         {
 
-            Console.WriteLine("....Welcom To HOME APPLIANCE REPAIR MANAGEMENT SYSTEM...");
+            using var context = new AppDbContext();
+            context.Database.Migrate();
 
+            var customerService = new CustomerService(context);
+            var technicianService = new TechnicianService(context);
+            var repairOrderService = new RepairOrderService(context);
+            var invoiceService = new InvoiceService(context);
+            var reportService = new ReportService(context);
 
-            bool exit = false;
-            while (!exit)
+            while (true)
             {
-                DisplayMainMenu();
-                string choice = Console.ReadLine();
+                Console.Clear();
+                Console.WriteLine("Main Menu:");
+                Console.WriteLine("1. Manage Customers");
+                Console.WriteLine("2. Manage Technicians");
+                Console.WriteLine("3. Manage Repair Orders");
+                Console.WriteLine("4. Reports");
+                Console.WriteLine("5. Exit");
+                var choice = Console.ReadLine();
 
                 switch (choice)
                 {
                     case "1":
-                        ManageCustomers();
+                        ManageCustomers(customerService);
                         break;
                     case "2":
-                        ManageTechnicians();
+                        ManageTechnicians(technicianService);
                         break;
                     case "3":
-                        ManageRepairOrders();
+                        ManageRepairOrders(repairOrderService);
                         break;
                     case "4":
-                        ViewReports();
+                        ManageReports(reportService);
                         break;
                     case "5":
-                        exit = true;
-                        Console.WriteLine("\n✓ Thank you for using the system. Goodbye!");
-                        break;
-                    default:
-                        Console.WriteLine("\n✗ Invalid option. Please try again.");
-                        break;
+                        return;
                 }
             }
         }
 
-
-        static void DisplayMainMenu()
+        static void ManageCustomers(CustomerService service)
         {
-            Console.WriteLine("\n               MAIN MENU                     ");
-            Console.WriteLine(" 1. Manage Customers                           ");
-            Console.WriteLine(" 2. Manage Technicians                         ");
-            Console.WriteLine(" 3. Manage Repair Orders                       ");
-            Console.WriteLine(" 4. Reports                                    ");
-            Console.WriteLine(" 5. Exit                                       ");
-            Console.WriteLine("                                               ");
-            Console.Write("\n   Select an option:   ");
-        }
-
-        #region Customer Management
-        static void ManageCustomers()
-        {
-            bool back = false;
-            while (!back)
+            Console.WriteLine("1. Add Customer");
+            Console.WriteLine("2. Edit Customer");
+            Console.WriteLine("3. Delete Customer");
+            Console.WriteLine("4. List Customers");
+            Console.WriteLine("5. Back");
+            var choice = Console.ReadLine();
+            switch (choice)
             {
-                Console.WriteLine("\n          CUSTOMER MANAGEMENT         ");
-                Console.WriteLine(" 1. Add New Customer                    ");
-                Console.WriteLine(" 2. View All Customers                  ");
-                Console.WriteLine(" 3. Edit Customer                       ");
-                Console.WriteLine(" 4. Delete Customer                     ");
-                Console.WriteLine(" 5. Back to Main Menu                   ");
-                Console.Write("\n Select an option: ");
-
-                string choice = Console.ReadLine();
-
-                switch (choice)
-                {
-                    case "1":
-                        AddCustomer();
-                        break;
-                    case "2":
-                        ViewAllCustomers();
-                        break;
-                    case "3":
-                        EditCustomer();
-                        break;
-                    case "4":
-                        DeleteCustomer();
-                        break;
-                    case "5":
-                        back = true;
-                        break;
-                    default:
-                        Console.WriteLine("\n✗ Invalid option.");
-                        break;
-                }
+                case "1":
+                    Console.Write("Name: ");
+                    var name = Console.ReadLine();
+                    Console.Write("Phone: ");
+                    var phone = Console.ReadLine();
+                    Console.Write("Address: ");
+                    var address = Console.ReadLine();
+                    service.AddCustomer(name, phone, address);
+                    break;
+                case "2":
+                    Console.Write("ID: ");
+                    int id = int.Parse(Console.ReadLine());
+                    Console.Write("Name: ");
+                    name = Console.ReadLine();
+                    Console.Write("Phone: ");
+                    phone = Console.ReadLine();
+                    Console.Write("Address: ");
+                    address = Console.ReadLine();
+                    service.EditCustomer(id, name, phone, address);
+                    break;
+                case "3":
+                    Console.Write("ID: ");
+                    id = int.Parse(Console.ReadLine());
+                    service.DeleteCustomer(id);
+                    break;
+                case "4":
+                    service.ListCustomers();
+                    break;
             }
+            Console.ReadKey();
         }
 
-        static void AddCustomer()
+        static void ManageTechnicians(TechnicianService service)
         {
-            Console.WriteLine("\n── Add New Customer ──");
-            Console.Write("Name: ");
-            string name = Console.ReadLine();
-            Console.Write("Phone: ");
-            string phone = Console.ReadLine();
-            Console.Write("Address: ");
-            string address = Console.ReadLine();
-
-            CustomerService.AddCustomer(name, phone, address);
-            Console.WriteLine("\n✓ Customer added successfully!");
-        }
-
-        static void ViewAllCustomers()
-        {
-            var customers = _CustomerService.GetAllCustomers();
-            Console.WriteLine("\n── All Customers ──");
-            Console.WriteLine("ID\tName\t\t\tPhone\t\tAddress");
-            Console.WriteLine("─────────────────────────────────────────────────────────");
-            foreach (var c in customers)
+            Console.WriteLine("1. Add Technician");
+            Console.WriteLine("2. Edit Technician");
+            Console.WriteLine("3. Delete Technician");
+            Console.WriteLine("4. List Technicians");
+            Console.WriteLine("5. Back");
+            var choice = Console.ReadLine();
+            switch (choice)
             {
-                Console.WriteLine($"{c.CustomerId}\t{c.Name,-20}\t{c.Phone}\t{c.Address}");
+                case "1":
+                    Console.Write("Name: ");
+                    var name = Console.ReadLine();
+                    Console.Write("Phone: ");
+                    var phone = Console.ReadLine();
+                    Console.Write("Specialty: ");
+                    var specialty = Console.ReadLine();
+                    service.AddTechnician(name, phone, specialty);
+                    break;
+                case "2":
+                    Console.Write("ID: ");
+                    int id = int.Parse(Console.ReadLine());
+                    Console.Write("Name: ");
+                    name = Console.ReadLine();
+                    Console.Write("Phone: ");
+                    phone = Console.ReadLine();
+                    Console.Write("Specialty: ");
+                    specialty = Console.ReadLine();
+                    service.EditTechnician(id, name, phone, specialty);
+                    break;
+                case "3":
+                    Console.Write("ID: ");
+                    id = int.Parse(Console.ReadLine());
+                    service.DeleteTechnician(id);
+                    break;
+                case "4":
+                    service.ListTechnicians();
+                    break;
             }
+            Console.ReadKey();
         }
 
-        static void EditCustomer()
+        static void ManageRepairOrders(RepairOrderService service)
         {
-            Console.Write("\nEnter Customer ID to edit: ");
-            if (int.TryParse(Console.ReadLine(), out int id))
+            Console.WriteLine("1. Add Order");
+            Console.WriteLine("2. Assign Technician");
+            Console.WriteLine("3. Change Status");
+            Console.WriteLine("4. Complete Order");
+            Console.WriteLine("5. Cancel Order");
+            Console.WriteLine("6. List Orders");
+            Console.WriteLine("7. Back");
+            var choice = Console.ReadLine();
+            switch (choice)
             {
-                var customer = _CustomerService.GetCustomerById(id);
-                if (customer != null)
-                {
-                    Console.WriteLine($"\nEditing: {customer.Name}");
-                    Console.Write("New Name (leave blank to keep current): ");
-                    string name = Console.ReadLine();
-                    Console.Write("New Phone (leave blank to keep current): ");
-                    string phone = Console.ReadLine();
-                    Console.Write("New Address (leave blank to keep current): ");
-                    string address = Console.ReadLine();
-
-                    _CustomerService.UpdateCustomer(id,
-                        string.IsNullOrWhiteSpace(name) ? customer.Name : name,
-                        string.IsNullOrWhiteSpace(phone) ? customer.Phone : phone,
-                        string.IsNullOrWhiteSpace(address) ? customer.Address : address);
-
-                    Console.WriteLine("\n✓ Customer updated successfully!");
-                }
-                else
-                {
-                    Console.WriteLine("\n✗ Customer not found.");
-                }
+                case "1":
+                    Console.Write("Customer ID: ");
+                    int customerId = int.Parse(Console.ReadLine());
+                    Console.Write("Appliance Type: ");
+                    var applianceType = Console.ReadLine();
+                    Console.Write("Problem: ");
+                    var problem = Console.ReadLine();
+                    service.CreateOrder(customerId, applianceType, problem);
+                    break;
+                case "2":
+                    Console.Write("Order ID: ");
+                    int orderId = int.Parse(Console.ReadLine());
+                    Console.Write("Technician ID: ");
+                    int technicianId = int.Parse(Console.ReadLine());
+                    service.AssignTechnician(orderId, technicianId);
+                    break;
+                case "3":
+                    Console.Write("Order ID: ");
+                    orderId = int.Parse(Console.ReadLine());
+                    Console.Write("Status (0=Pending,1=Assigned,2=InProgress,3=Completed,4=Cancelled): ");
+                    OrderStatus status = (OrderStatus)int.Parse(Console.ReadLine());
+                    service.ChangeStatus(orderId, status);
+                    break;
+                case "4":
+                    Console.Write("Order ID: ");
+                    orderId = int.Parse(Console.ReadLine());
+                    Console.Write("Parts Cost: ");
+                    decimal partsCost = decimal.Parse(Console.ReadLine());
+                    Console.Write("Service Cost: ");
+                    decimal serviceCost = decimal.Parse(Console.ReadLine());
+                    service.CompleteOrder(orderId, partsCost, serviceCost);
+                    break;
+                case "5":
+                    Console.Write("Order ID: ");
+                    orderId = int.Parse(Console.ReadLine());
+                    service.CancelOrder(orderId);
+                    break;
+                case "6":
+                    service.ListOrders();
+                    break;
             }
+            Console.ReadKey();
         }
 
-        static void DeleteCustomer()
+        static void ManageReports(ReportService service)
         {
-            Console.Write("\nEnter Customer ID to delete: ");
-            if (int.TryParse(Console.ReadLine(), out int id))
+            Console.WriteLine("1. Orders by Status");
+            Console.WriteLine("2. Orders per Technician");
+            Console.WriteLine("3. Orders by Date");
+            Console.WriteLine("4. Back");
+            var choice = Console.ReadLine();
+            switch (choice)
             {
-                if (
-                    _CustomerService.DeleteCustomer(id))
-                    Console.WriteLine("\n✓ Customer deleted successfully!");
-                else
-                    Console.WriteLine("\n✗ Cannot delete customer.");
+                case "1":
+                    service.OrdersCountByStatus();
+                    break;
+                case "2":
+                    service.OrdersPerTechnician();
+                    break;
+                case "3":
+                    Console.Write("Start Date (yyyy-mm-dd): ");
+                    DateTime start = DateTime.Parse(Console.ReadLine());
+                    Console.Write("End Date (yyyy-mm-dd): ");
+                    DateTime end = DateTime.Parse(Console.ReadLine());
+                    service.OrdersByDate(start, end);
+                    break;
             }
+            Console.ReadKey();
         }
-        #endregion
-
-        #region Technician Management
-        static void ManageTechnicians()
-        {
-            bool back = false;
-            while (!back)
-            {
-                Console.WriteLine("\n        TECHNICIAN MANAGEMENT         ");
-                Console.WriteLine(" 1. Add New Technician                   ");
-                Console.WriteLine(" 2. View All Technicians                 ");
-                Console.WriteLine(" 3. Edit Technician                      ");
-                Console.WriteLine(" 4. Delete Technician                    ");
-                Console.WriteLine(" 5. Back to Main Menu                    ");
-                Console.WriteLine("                                         ");
-                Console.Write("\nSelect an option: ");
-
-                string choice = Console.ReadLine();
-
-                switch (choice)
-                {
-                    case "1":
-                        AddTechnician();
-                        break;
-                    case "2":
-                        ViewAllTechnicians();
-                        break;
-                    case "3":
-                        EditTechnician();
-                        break;
-                    case "4":
-                        DeleteTechnician();
-                        break;
-                    case "5":
-                        back = true;
-                        break;
-                    default:
-                        Console.WriteLine("\n✗ Invalid option.");
-                        break;
-                }
-            }
-        }
-
-        static void AddTechnician()
-        {
-            Console.WriteLine("\n── Add New Technician ──");
-            Console.Write("Name: ");
-            string name = Console.ReadLine();
-            Console.Write("Phone: ");
-            string phone = Console.ReadLine();
-            Console.Write("Specialty (e.g., Refrigerator, AC, Washing Machine): ");
-            string specialty = Console.ReadLine();
-
-            _TechnicianService.AddTechnician(name, phone, specialty);
-            Console.WriteLine("\n✓ Technician added successfully!");
-        }
-
-        static void ViewAllTechnicians()
-        {
-            var technicians = _TechnicianService.GetAllTechnicians();
-            Console.WriteLine("\n── All Technicians ──");
-            Console.WriteLine("ID\tName\t\t\tPhone\t\tSpecialty");
-            Console.WriteLine("─────────────────────────────────────────────────────────");
-            foreach (var t in technicians)
-            {
-                Console.WriteLine($"{t.TechnicianId}\t{t.Name,-20}\t{t.Phone}\t{t.Specialty}");
-            }
-        }
-
-        static void EditTechnician()
-        {
-            Console.Write("\nEnter Technician ID to edit: ");
-            if (int.TryParse(Console.ReadLine(), out int id))
-            {
-                var tech = _TechnicianService.GetTechnicianById(id);
-                if (tech != null)
-                {
-                    Console.WriteLine($"\nEditing: {tech.Name}");
-                    Console.Write("New Name: ");
-                    string name = Console.ReadLine();
-                    Console.Write("New Phone: ");
-                    string phone = Console.ReadLine();
-                    Console.Write("New Specialty: ");
-                    string specialty = Console.ReadLine();
-
-                    _technicianService.UpdateTechnician(id,
-                        string.IsNullOrWhiteSpace(name) ? tech.Name : name,
-                        string.IsNullOrWhiteSpace(phone) ? tech.Phone : phone,
-                        string.IsNullOrWhiteSpace(specialty) ? tech.Specialty : specialty);
-
-                    Console.WriteLine("\n✓ Technician updated successfully!");
-                }
-                else
-                {
-                    Console.WriteLine("\n✗ Technician not found.");
-                }
-            }
-        }
-
-        static void DeleteTechnician()
-        {
-            Console.Write("\nEnter Technician ID to delete: ");
-            if (int.TryParse(Console.ReadLine(), out int id))
-            {
-                if (_TechnicianService.DeleteTechnician(id))
-                    Console.WriteLine("\n✓ Technician deleted successfully!");
-            }
-        }
-        #endregion
-
-        #region Repair Order Management
-        static void ManageRepairOrders()
-        {
-            bool back = false;
-            while (!back)
-            {
-                Console.WriteLine("\n         REPAIR ORDER MANAGEMENT         ");
-                Console.WriteLine(" 1. Add New Order                          ");
-                Console.WriteLine(" 2. Assign Technician                      ");
-                Console.WriteLine(" 3. Change Status                          ");
-                Console.WriteLine(" 4. Complete Order (Enter Costs)           ");
-                Console.WriteLine(" 5. Cancel Order                           ");
-                Console.WriteLine(" 6. View All Orders                        ");
-                Console.WriteLine(" 7. Back to Main Menu                      ");
-
-                Console.Write("\nSelect an option: ");
-
-                string choice = Console.ReadLine();
-
-                switch (choice)
-                {
-                    case "1":
-                        AddRepairOrder();
-                        break;
-                    case "2":
-                        AssignTechnician();
-                        break;
-                    case "3":
-                        ChangeOrderStatus();
-                        break;
-                    case "4":
-                        CompleteOrder();
-                        break;
-                    case "5":
-                        CancelOrder();
-                        break;
-                    case "6":
-                        ViewAllOrders();
-                        break;
-                    case "7":
-                        back = true;
-                        break;
-                    default:
-                        Console.WriteLine("\n✗ Invalid option.");
-                        break;
-                }
-            }
-        }
-
-
     }
+
 }

@@ -8,16 +8,13 @@ namespace HomeApplianceRepairManagementSystem.Models.classes
 {
     public class Technician
     {
-        public int TechId { get; set; }
-        public string TName { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
         public string Phone { get; set; }
         public string Specialty { get; set; }
-
-       
-        
-        
-        public ICollection<RepairOrder> RepairOrders { get; set; }
-
-
+        public ICollection<RepairOrder> RepairOrders { get; set; } = new List<RepairOrder>();
     }
+
+
 }
+

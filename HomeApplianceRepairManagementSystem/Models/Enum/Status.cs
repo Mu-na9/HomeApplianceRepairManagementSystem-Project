@@ -12,6 +12,6 @@ namespace HomeApplianceRepairManagementSystem.Models.Enum
         Assigned,
         InProgress,
         Completed,
-        Canclled, 
+        Cancelled
     }
 }
